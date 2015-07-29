@@ -1,0 +1,18 @@
+{
+    "name": "thatgerber/45n-product-showcase",
+    "description": "Product Showcase plugin for WordPress",
+    "license": "GPL v2",
+    "authors": [
+        {
+            "name": "Chris W. Gerber",
+            "email": "chriswgerber@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"ChrisWGerber\\ProductShowcase\\": "includes/"}
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "phpcollection/phpcollection": "0.4.*"
+    }
+}
