@@ -214,8 +214,6 @@ class Metabox {
 	 * @return void|mixed
 	 */
 	public function save_data( $post_id ) {
-		var_dump( $_POST );
-
 		/*
 		 * We need to verify this came from our screen and with proper authorization,
 		 * because the save_post action can be triggered at other times.

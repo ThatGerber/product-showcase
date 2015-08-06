@@ -45,6 +45,8 @@ add_action( 'plugins_loaded', function () {
 	$ps_products->register_post_type();
 	// Fields
 	$ps_products->add_meta_field( 'Showcase Link', new Metadata() );
+	$ps_products->add_meta_field( 'End Date', new Metadata() );
+	$ps_products->meta_data->get( 'End Date' )->get()->type = 'datepicker';
 	// Post Statuses
 	$ps_products->new_post_status( 'Completed', new CustomPostStatus );
 	$ps_products->register_post_statuses();
@@ -55,9 +57,7 @@ add_action( 'plugins_loaded', function () {
 	// Set Callback to create metabox
 	$ps_products->meta_box['Product Information']->set_callback( function ( $wp_post_obj, $metabox ) {
 		global $ps_products;
-		var_dump( $metabox );
-		$metabox_name = $metabox['id'];
-		new Fields( $metabox_name, $ps_products->meta_data->all() );
+		new Fields( $metabox['id'], $ps_products->meta_data->all() );
 	} );
 	// Register
 	$ps_products->meta_box['Product Information']->register_metabox();

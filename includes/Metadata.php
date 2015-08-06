@@ -136,7 +136,7 @@ class Metadata {
 	 * @since  1.0.0
 	 *
 	 * @param mixed $value
-	 * @param int $post_id
+	 * @param int   $post_id
 	 *
 	 * @return $this
 	 */
