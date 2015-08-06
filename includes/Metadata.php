@@ -19,7 +19,7 @@ class Metadata {
 	 * Key used to idenitify the data.
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -29,7 +29,7 @@ class Metadata {
 	 * Publicly usable name for the data.
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -40,7 +40,7 @@ class Metadata {
 	 * to pull the data.
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var mixed
 	 */
@@ -52,11 +52,15 @@ class Metadata {
 	 * text string, url, text area, email address, image, etc.
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
 	public $type;
+
+	public function __construct( $type = null ) {
+		$this->set_type( $type );
+	}
 
 	/**
 	 * Sets the product ID.
@@ -65,13 +69,13 @@ class Metadata {
 	 * but can also fall back to name/key of the field
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param null $meta_id
 	 *
 	 * @return $this
 	 */
-	protected function set_id( $meta_id = null ) {
+	public function set_id( $meta_id = null ) {
 		if ( $meta_id == null && isset( $this->name ) ) {
 			$new_id = $this->name;
 		} elseif ( $meta_id !== null ) {
@@ -86,7 +90,7 @@ class Metadata {
 	 * Returns the ID of the metadata
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return string
 	 */
@@ -99,7 +103,7 @@ class Metadata {
 	 * Sets the name of the metadata
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param $name
 	 *
@@ -116,7 +120,7 @@ class Metadata {
 	 * Returns the name of the meta field/key
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return string
 	 */
@@ -129,14 +133,22 @@ class Metadata {
 	 * Sets the value of the field
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
-	 * @param $value
+	 * @param mixed $value
+	 * @param int $post_id
 	 *
 	 * @return $this
 	 */
-	public function set_value( $value ) {
-		$this->value = $value;
+	public function set_value( $value, $post_id = null ) {
+		if ( null === $post_id ) {
+			global $post;
+			$post_id = $post->ID;
+		}
+		$success = update_post_meta( $post_id, $this->name, $value );
+		if ( $success ) {
+			$this->value = get_post_meta( $post_id, $this->name, true );
+		}
 
 		return $this;
 	}
@@ -147,6 +159,11 @@ class Metadata {
 	 * @return mixed
 	 */
 	public function get_value( $post_id = null ) {
+		if ( null === $post_id ) {
+			global $post;
+			$post_id = $post->ID;
+		}
+		$this->value = get_post_meta( $post_id, $this->name, true );
 
 		return $this->value;
 	}
@@ -154,8 +171,12 @@ class Metadata {
 	public function get_post() {
 	}
 
-	public function set_type( $type ) {
-		$this->type = $type;
+	public function set_type( $type = null ) {
+		if ( null == $type ) {
+			$this->type = 'text';
+		} else {
+			$this->type = $type;
+		}
 
 		return $this;
 	}

@@ -121,6 +121,12 @@ class Metabox {
 	 */
 	public $options_string;
 
+	/**
+	 * PHP5 Constructor
+	 *
+	 * @param $title
+	 * @param $post_types
+	 */
 	public function __construct( $title, $post_types ) {
 		$this->title      = $title;
 		$this->id         = sanitize_title_with_dashes( $title );
@@ -147,7 +153,7 @@ class Metabox {
 	 *
 	 * @return void
 	 */
-	public function register_metaboxes() {
+	public function register_metabox() {
 		if ( is_array( $this->post_types ) ) {
 			foreach ( $this->post_types as $screen ) {
 				$this->current_post_type = $screen;
@@ -155,6 +161,25 @@ class Metabox {
 			}
 		} else {
 			add_action( "add_meta_boxes_{$this->post_types}", array( $this, 'add_metabox' ) );
+		}
+		$this->register_save_data();
+	}
+
+	/**
+	 * Registers save function with each of the post types this is enqueued on
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function register_save_data() {
+		if ( is_array( $this->post_types ) ) {
+			foreach ( $this->post_types as $screen ) {
+				add_action( 'save_' . $screen, array( $this, 'save_data' ) );
+			}
+		} else {
+			add_action( "save_{$this->post_types}", array( $this, 'save_data' ) );
 		}
 	}
 
@@ -179,34 +204,18 @@ class Metabox {
 	}
 
 	/**
-	 * Registers save function with each of the post types this is enqueued on
-	 *
-	 * @since  1.0.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function register_save_data() {
-		if ( is_array( $this->post_types ) ) {
-			foreach ( $this->post_types as $screen ) {
-				add_action( 'save_' . $screen, array( $this, 'save_data' ) );
-			}
-		} else {
-			add_action( "save_{$this->post_types}", array( $this, 'save_data' ) );
-		}
-	}
-
-	/**
 	 * Saves the metabox data
 	 *
 	 * @since  1.0.0
 	 * @access public
 	 *
-	 * @param \WP_POST $post_id
+	 * @param \WP_POST::ID $post_id
 	 *
 	 * @return void|mixed
 	 */
 	public function save_data( $post_id ) {
+		var_dump( $_POST );
+
 		/*
 		 * We need to verify this came from our screen and with proper authorization,
 		 * because the save_post action can be triggered at other times.

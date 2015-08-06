@@ -70,7 +70,6 @@ Class ShowcaseCollection extends CollectionSequence implements ICanAccessProduct
 	 */
 	public function __construct( array $elements = array() ) {
 		parent::__construct( $elements );
-
 		$this->post_type_labels = $this->get_post_type_labels();
 		$this->post_type_args   = $this->get_post_type_args();
 	}
@@ -86,7 +85,7 @@ Class ShowcaseCollection extends CollectionSequence implements ICanAccessProduct
 	 * @return $this
 	 */
 	public function add_meta_box( $title ) {
-		$this->meta_box  = array( $title => new Metabox( $title, $this->post_type_name ) );
+		$this->meta_box = array( $title => new Metabox( $title, $this->post_type_name ) );
 		if ( ! isset( $this->meta_data ) ) {
 			$this->meta_data = $this->create_collection();
 		}
@@ -103,11 +102,11 @@ Class ShowcaseCollection extends CollectionSequence implements ICanAccessProduct
 	 * @return $this
 	 */
 	public function add_meta_field( $name, Metadata $class_object ) {
-		$class_object->set_name = $name;
 		if ( ! isset( $this->meta_data ) ) {
 			$this->meta_data = $this->create_collection();
 		}
 		$this->meta_data->set( $name, $class_object );
+		$this->meta_data->get( $name )->get()->set_name( $name );
 
 		return $this;
 	}

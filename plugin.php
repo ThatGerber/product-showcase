@@ -50,17 +50,17 @@ add_action( 'plugins_loaded', function () {
 	$ps_products->register_post_statuses();
 	// Metabox
 	$ps_products->add_meta_box( 'Product Information' );
+	// Create Fields
 	$ps_products->meta_box['Product Information']->fields = $ps_products->meta_data->all();
-	$ps_products->meta_box['Product Information']->set_callback( function ( $wp_post_obj, $value ) {
-		echo 'Testing';
-		var_dump( $wp_post_obj );
-		var_dump( $value );
+	// Set Callback to create metabox
+	$ps_products->meta_box['Product Information']->set_callback( function ( $wp_post_obj, $metabox ) {
+		global $ps_products;
+		var_dump( $metabox );
+		$metabox_name = $metabox['id'];
+		new Fields( $metabox_name, $ps_products->meta_data->all() );
 	} );
-	$ps_products->meta_box['Product Information']->register_metaboxes();
-	$ps_products->meta_box['Product Information']->register_save_data();
-
-	//var_dump( $ps_products );
-
+	// Register
+	$ps_products->meta_box['Product Information']->register_metabox();
 	if ( is_admin() ) {
 	}
 } );
