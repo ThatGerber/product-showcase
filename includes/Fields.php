@@ -42,22 +42,22 @@ class Fields {
 	}
 
 	public function create_field( Metadata $metadata ) {
-		$type = $metadata->get_type();
-
-		self::"${type}_field"( $this->metabox_id, $metadata );
-
+		call_user_func_array(
+			array( $this, "{$metadata->get_type()}_field" ),
+			array( $this->metabox_id, $metadata )
+		);
 	}
 
 	/**
-	 * @param          $metabox
+	 * @param string   $metabox_id
 	 * @param Metadata $args
 	 */
-	public static function text_field( $metabox, Metadata $args ) {
+	public static function text_field( $metabox_id, Metadata $args ) {
 		?>
 		<tr>
 			<td>
 				<p>
-					<label for="<?php _e( $metabox . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>">
+					<label for="<?php _e( $metabox_id . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>">
 						<?php _e( $args->get_name(), 'cwg-ps' ); ?>
 					</label></p>
 			</td>
@@ -65,8 +65,33 @@ class Fields {
 				<p>
 					<input type="text" id="<?php _e( $args->get_id(), 'cwg-ps' ); ?>"
 					       class="regular-text"
-					       name="<?php _e( $metabox . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>"
+					       name="<?php _e( $metabox_id . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>"
 					       value="<?php _e( $args->get_value(), 'cwg-ps' ); ?>"/></p>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * @param string   $metabox_id
+	 * @param Metadata $args
+	 */
+	public static function datepicker_field( $metabox_id, Metadata $args ) {
+		$value = date( 'Y-m-d', strtotime( ( null != $args->get_value() ? $args->get_value() : 'mm/dd/yyyy' ) ) );
+		?>
+		<tr>
+			<td>
+				<p>
+					<label for="<?php _e( $metabox_id . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>">
+						<?php _e( $args->get_name(), 'cwg-ps' ); ?>
+					</label></p>
+			</td>
+			<td>
+				<p>
+					<input type="date" id="<?php _e( $args->get_id(), 'cwg-ps' ); ?>"
+					       class="regular-text"
+					       name="<?php _e( $metabox_id . '[' . $args->get_id() . ']', 'cwg-ps' ); ?>"
+					       value="<?php _e( $value, 'cwg-ps' ); ?>"/></p>
 			</td>
 		</tr>
 		<?php

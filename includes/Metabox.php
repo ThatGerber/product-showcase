@@ -106,9 +106,9 @@ class Metabox {
 	 * Fields to populate the metabox
 	 *
 	 * Each item in the array should be an instance
-	 * of Metabox
+	 * of Metadata
 	 *
-	 * @see \ChrisWGerber\ProductShowcase\Metabox
+	 * @see \ChrisWGerber\ProductShowcase\Metadata
 	 *
 	 * @var array
 	 */
@@ -176,10 +176,13 @@ class Metabox {
 	public function register_save_data() {
 		if ( is_array( $this->post_types ) ) {
 			foreach ( $this->post_types as $screen ) {
-				add_action( 'save_' . $screen, array( $this, 'save_data' ) );
+				add_action( 'save_' . $screen, array( $this, 'save_data' ), 10, 2 );
 			}
 		} else {
-			add_action( "save_{$this->post_types}", array( $this, 'save_data' ) );
+			add_action( "save_{$this->post_types}", function () {
+				set_transient( 'Showcase/Save_Data/Test', 'Is it registering?' );
+			} );
+			add_action( "save_post_{$this->post_types}", array( $this, 'save_data' ), 10, 2 );
 		}
 	}
 
@@ -209,27 +212,29 @@ class Metabox {
 	 * @since  1.0.0
 	 * @access public
 	 *
-	 * @param \WP_POST::ID $post_id
+	 * @param  \WP_POST::ID $post_id
+	 * @param  \WP_POST $post
 	 *
 	 * @return void|mixed
 	 */
-	public function save_data( $post_id ) {
+	public function save_data( $post_id, $post ) {
+		$post_type = get_post_type_object( $post->post_type );
 		/*
 		 * We need to verify this came from our screen and with proper authorization,
 		 * because the save_post action can be triggered at other times.
 		 */
 		if (
 			! isset( $_POST[ $this->id . '_meta_box_nonce' ] ) ||
-			! wp_verify_nonce( filter_input( INPUT_POST, $this->id . '_meta_box_nonce' ), $this->id . '_meta_box' ) ||
+			! wp_verify_nonce( $_POST[ $this->id . '_meta_box_nonce' ], $this->id . '_meta_box' ) ||
 			defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ||
-			! isset( $_POST[ $this->meta_key ] )
+			! current_user_can( $post_type->cap->edit_post, $post_id )
 		) {
-			return;
+			return $post_id;
 		}
-		// Sanitize user input.
-		$my_data = sanitize_text_field( $_POST[ $this->meta_key ] );
-		// Update the meta field in the database.
-		update_post_meta( $post_id, $this->meta_key, $my_data );
+		foreach ( $this->fields as $name => $field ) {
+			$value = sanitize_text_field( $_POST[ $this->id ][ $field->get_id() ] );
+			$field->set_value( $value );
+		}
 	}
 
 }

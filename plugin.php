@@ -46,7 +46,7 @@ add_action( 'plugins_loaded', function () {
 	// Fields
 	$ps_products->add_meta_field( 'Showcase Link', new Metadata() );
 	$ps_products->add_meta_field( 'End Date', new Metadata() );
-	$ps_products->meta_data->get( 'End Date' )->get()->type = 'datepicker';
+	$ps_products->meta_data->get( 'End Date' )->get()->set_type( 'datepicker' );
 	// Post Statuses
 	$ps_products->new_post_status( 'Completed', new CustomPostStatus );
 	$ps_products->register_post_statuses();
@@ -57,10 +57,19 @@ add_action( 'plugins_loaded', function () {
 	// Set Callback to create metabox
 	$ps_products->meta_box['Product Information']->set_callback( function ( $wp_post_obj, $metabox ) {
 		global $ps_products;
+		wp_nonce_field(
+			$ps_products->meta_box['Product Information']->id . '_meta_box',
+			$ps_products->meta_box['Product Information']->id . '_meta_box_nonce'
+		);
 		new Fields( $metabox['id'], $ps_products->meta_data->all() );
 	} );
 	// Register
 	$ps_products->meta_box['Product Information']->register_metabox();
-	if ( is_admin() ) {
-	}
+	get_transient( 'Showcase/Save_Data/Test' );
+	// Widget
+} );
+
+add_action( 'widgets_init', function() {
+	include 'templates/showcase-widget.php';
+	register_widget( "ChrisWGerber\ProductShowcase\Widget" );
 } );

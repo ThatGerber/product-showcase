@@ -9,23 +9,70 @@
  */
 namespace ChrisWGerber\ProductShowcase;
 
-Class ProductShowcaseWidget extends \WP_Widget {
+Class Widget extends \WP_Widget {
 
+	/**
+	 * @TODO     - Rename "widget-name" to the name your your widget
+	 *
+	 * Unique identifier for your widget.
+	 *
+	 *
+	 * The variable name is used as the text domain when internationalizing strings
+	 * of text. Its value should match the Text Domain file header in the main
+	 * widget file.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @var      string
+	 */
+	protected $widget_slug = 'product_showcase_widget';
+
+	protected $fields = array(
+		'title'          => array(
+			'id' => 'title',
+			'name' => 'Title:',
+			'type' => 'text'
+		),
+		'displayType'    => 'select',
+		'autoplaySpeed'  => 'text',
+		'animationSpeed' => 'text',
+	);
+
+	/**
+	 * PHP5 Constructor
+	 *
+	 * @since    1.0.0
+	 */
 	public function __construct() {
 		parent::__construct(
-			// Base ID of your widget
-			'product_showcase_widget',
+		// Base ID of your widget
+			$this->get_widget_slug(),
 			// Widget name will appear in UI
 			__( 'Product Showcase', 'cwg-ps' ),
-			// Widget description
-			array( 'description' => __( 'Showcase of the latest products', 'cwg-ps' ), )
+			array( 'description' => __( 'Showcase of the Latest Products', 'cwg-ps' ), )
 		);
+	}
+
+	/**
+	 * Return the widget slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Plugin slug variable.
+	 */
+	public function get_widget_slug() {
+
+		return $this->widget_slug;
 	}
 
 	/**
 	 * Creating widget front-end
 	 *
 	 * This is where the action happens
+	 *
+	 * @TODO     Make this work
+	 *
+	 * @since    1.0.0
 	 *
 	 * @param $args
 	 * @param $instance
@@ -43,7 +90,13 @@ Class ProductShowcaseWidget extends \WP_Widget {
 	/**
 	 * Widget Backend
 	 *
-	 * @param $instance
+	 * @TODO     Make this work
+	 *
+	 * @since    1.0.0
+	 *
+	 * @param array $instance
+	 *
+	 * @return mixed
 	 */
 	public function form( $instance ) {
 		if ( isset( $instance['title'] ) ) {
@@ -52,18 +105,27 @@ Class ProductShowcaseWidget extends \WP_Widget {
 			$title = __( 'New title', 'cwg-ps' );
 		}
 		// Widget admin form
+		$this->text_input( 'title', 'Title:', $title );
+	}
+
+	public function text_input( $id, $name, $value ) {
 		?>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>"
-			       name="<?php echo $this->get_field_name( 'title' ); ?>" type="text"
-			       value="<?php echo esc_attr( $title ); ?>"/>
+			<label for="<?php echo $this->get_field_id( $id ); ?>"><?php _e( $name ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( $id ); ?>"
+			       name="<?php echo $this->get_field_name( $id ); ?>" type="text"
+			       value="<?php echo esc_attr( $value ); ?>"/>
 		</p>
 		<?php
+
 	}
 
 	/**
 	 * Updating widget replacing old instances with new
+	 *
+	 * @TODO     Make this work
+	 *
+	 * @since    1.0.0
 	 *
 	 * @param $new_instance
 	 * @param $old_instance
@@ -75,6 +137,10 @@ Class ProductShowcaseWidget extends \WP_Widget {
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 
 		return $instance;
+	}
+
+	protected function displayType() {
+
 	}
 
 }

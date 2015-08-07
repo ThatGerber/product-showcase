@@ -75,6 +75,19 @@ Class ShowcaseCollection extends CollectionSequence implements ICanAccessProduct
 	}
 
 	/**
+	 * Reverse all of the items in the elements array
+	 *
+	 * Must be declared for
+	 *
+	 * @return $this
+	 */
+	public function reverse() {
+		array_reverse( $this->elements );
+
+		return $this;
+	}
+
+	/**
 	 * Creates a new metabox
 	 *
 	 * Metabox is created as a collection. Collection consists of a grouping of
@@ -149,13 +162,6 @@ Class ShowcaseCollection extends CollectionSequence implements ICanAccessProduct
 		wp_reset_query();
 
 		return $this->posts;
-	}
-
-	/**
-	 * Reverse all of the items in the elements array
-	 */
-	public function reverse() {
-		array_reverse( $this->elements );
 	}
 
 	/**

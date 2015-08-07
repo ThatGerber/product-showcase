@@ -58,6 +58,11 @@ class Metadata {
 	 */
 	public $type;
 
+	/**
+	 * PHP5 Constructor
+	 *
+	 * @param null $type
+	 */
 	public function __construct( $type = null ) {
 		$this->set_type( $type );
 	}
